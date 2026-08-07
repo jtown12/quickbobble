@@ -144,9 +144,9 @@ function onDeviceMotion(event) {
     const beta = rot.beta || 0; // roll rate -> roll
     const gamma = rot.gamma || 0; // spin rate -> yaw
     const alpha = rot.alpha || 0; // nod rate -> pitch
-    velX += alpha * GYRO_SCALE;
-    velZ += beta * GYRO_SCALE;
-    velY += gamma * GYRO_SCALE;
+    velX += alpha * params.GYRO_SCALE;
+    velZ += beta * params.GYRO_SCALE;
+    velY += gamma * params.GYRO_SCALE;
   }
 }
 
