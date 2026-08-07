@@ -11,7 +11,6 @@ const fileInput = document.getElementById("file-input");
 // --- three.js setup ---
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
 
 const camera = new THREE.PerspectiveCamera(
   40,
@@ -22,7 +21,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 0, 4);
 camera.lookAt(0, 0, 0);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 
