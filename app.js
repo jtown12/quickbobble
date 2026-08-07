@@ -301,12 +301,14 @@ settingsReset.addEventListener("click", () => {
 
 // --- carousel swipe ---
 
+const BODY_URLS = ["./body.png", "./body2.png"];
+
 const bodyCarousel = document.getElementById("body-carousel");
 for (let i = 0; i < slots.length; i++) {
   const slide = document.createElement("div");
   slide.className = "body-slide";
   const img = document.createElement("img");
-  img.src = "./body.png";
+  img.src = BODY_URLS[i];
   img.alt = "";
   slide.appendChild(img);
   bodyCarousel.appendChild(slide);
