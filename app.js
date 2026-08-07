@@ -42,7 +42,7 @@ const SLOT_SPACING = 3.2; // world units between bobble heads
 const carouselGroup = new THREE.Group();
 scene.add(carouselGroup);
 
-const SLOT_URLS = ["./model.glb", "./model2.glb"];
+const SLOT_URLS = ["./model.glb", "./model2.glb", "./model3.glb"];
 
 const slots = SLOT_URLS.map((url, i) => {
   const pivotGroup = new THREE.Group();
@@ -301,7 +301,7 @@ settingsReset.addEventListener("click", () => {
 
 // --- carousel swipe ---
 
-const BODY_URLS = ["./body.png", "./body2.png"];
+const BODY_URLS = ["./body.png", "./body2.png", "./body3.png"];
 
 const bodyCarousel = document.getElementById("body-carousel");
 for (let i = 0; i < slots.length; i++) {
