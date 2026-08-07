@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bobble</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  #canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #666;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  #overlay.hidden {
+    display: none;
+  }
+
+  #upload-btn, #motion-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #upload-btn:active, #motion-btn:active {
+    opacity: 0.7;
+  }
+
+  #hint {
+    font-size: 13px;
+    color: #444;
+  }
+
+  #file-input {
+    display: none;
+  }
+
+  #corner-upload {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+    color: #555;
+    font-size: 13px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  #corner-upload.hidden {
+    display: none;
+  }
+
+  #controls {
+    position: fixed;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 16px;
+    z-index: 10;
+  }
+
+  .ctrl-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ddd;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ctrl-btn:active {
+    background: rgba(255, 255, 255, 0.22);
+  }
+</style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="overlay">
+    <button id="upload-btn">Upload GLB</button>
+    <div id="hint">Drop in a .glb model, then tilt your phone.</div>
+  </div>
+
+  <button id="motion-btn" style="display:none;">Enable Motion</button>
+  <button id="corner-upload" class="hidden">Upload</button>
+
+  <div id="controls">
+    <button class="ctrl-btn" id="btn-left">◀ Turn</button>
+    <button class="ctrl-btn" id="btn-right">Turn ▶</button>
+    <button class="ctrl-btn" id="btn-bumpy">Bumpy Road</button>
+    <button class="ctrl-btn" id="btn-gas">Gas</button>
+    <button class="ctrl-btn" id="btn-brake">Brake</button>
+  </div>
+
+  <input id="file-input" type="file" accept=".glb,model/gltf-binary" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="./app.js?v=1"></script>
+</body>
+</html>
