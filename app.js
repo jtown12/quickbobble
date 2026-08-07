@@ -134,19 +134,18 @@ function onDeviceMotion(event) {
     velBounceY += az * ACCEL_SCALE;
   }
 
-  // rotationRate axes are fixed to the phone body, not real-world directions.
-  // Held upright (normal use), beta still means nod forward/back, but gamma
-  // (rotation around the phone's long axis, now vertical) reads as spin, and
-  // alpha (rotation around the axis pointing out of the screen, now toward
-  // your face) reads as roll -- the reverse of what they'd mean lying flat.
+  // rotationRate axis-to-motion mapping is empirically tuned against real
+  // device behavior (it didn't match the on-paper geometry -- nod gestures
+  // read as gamma and roll gestures read as beta on the phones this was
+  // tested on, not the reverse).
   const rot = event.rotationRate;
   if (rot) {
-    const beta = rot.beta || 0; // front-back tilt rate -> pitch
-    const gamma = rot.gamma || 0; // spin rate (held upright) -> yaw
-    const alpha = rot.alpha || 0; // roll rate (held upright) -> roll
-    velX += beta * GYRO_SCALE;
-    velZ += alpha * GYRO_SCALE;
-    velY += -gamma * GYRO_SCALE;
+    const beta = rot.beta || 0; // roll rate -> roll
+    const gamma = rot.gamma || 0; // nod rate -> pitch
+    const alpha = rot.alpha || 0; // spin rate -> yaw
+    velX += gamma * GYRO_SCALE;
+    velZ += beta * GYRO_SCALE;
+    velY += alpha * GYRO_SCALE;
   }
 }
 
