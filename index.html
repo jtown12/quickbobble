@@ -23,7 +23,7 @@
 
   #body-img {
     position: fixed;
-    top: 70%;
+    top: 59%;
     left: 50%;
     transform: translateX(-50%);
     width: min(70vw, 420px);
@@ -100,6 +100,84 @@
     display: none;
   }
 
+  #settings-btn {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top));
+    left: 16px;
+    color: #555;
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    padding: 2px;
+  }
+
+  #settings-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.92);
+    box-sizing: border-box;
+    padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+
+  #settings-panel.hidden {
+    display: none;
+  }
+
+  #settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  #settings-close {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ddd;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .setting-row {
+    margin-bottom: 20px;
+  }
+
+  .setting-row label {
+    display: flex;
+    justify-content: space-between;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .setting-row .val {
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .setting-row input[type="range"] {
+    width: 100%;
+    accent-color: #fff;
+  }
+
+  #settings-reset {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+  }
+
   #controls {
     position: fixed;
     bottom: max(20px, env(safe-area-inset-bottom));
@@ -140,6 +218,16 @@
 
   <button id="motion-btn" style="display:none;">Enable Motion</button>
   <button id="corner-upload" class="hidden">Upload</button>
+  <button id="settings-btn" aria-label="Settings">⚙</button>
+
+  <div id="settings-panel" class="hidden">
+    <div id="settings-header">
+      <span>Settings</span>
+      <button id="settings-close" aria-label="Close">✕</button>
+    </div>
+    <div id="settings-body"></div>
+    <button id="settings-reset" class="ctrl-btn">Reset to Defaults</button>
+  </div>
 
   <div id="controls">
     <button class="ctrl-btn" id="btn-left">◀ Turn</button>
@@ -159,6 +247,6 @@
     }
   }
   </script>
-  <script type="module" src="./app.js?v=8"></script>
+  <script type="module" src="./app.js?v=12"></script>
 </body>
 </html>
