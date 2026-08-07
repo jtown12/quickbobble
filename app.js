@@ -33,12 +33,25 @@ const rimLight = new THREE.DirectionalLight(0x4488ff, 0.4);
 rimLight.position.set(-3, 1, -2);
 scene.add(rimLight);
 
-// pivotGroup rotates around the object's base, like a bobble head spring mount
-const pivotGroup = new THREE.Group();
-scene.add(pivotGroup);
-let model = null;
-let pivotBaseY = 0;
-const VERTICAL_OFFSET = 0.3; // shifts the model up on screen
+const VERTICAL_OFFSET = 0.3; // shifts each model up on screen
+const SLOT_SPACING = 3.2; // world units between bobble heads
+
+// carouselGroup slides horizontally to bring the active slot to center;
+// each slot has its own pivotGroup, which rotates around the model's base
+// like a bobble head spring mount
+const carouselGroup = new THREE.Group();
+scene.add(carouselGroup);
+
+const SLOT_URLS = ["./model.glb", "./model2.glb"];
+
+const slots = SLOT_URLS.map((url, i) => {
+  const pivotGroup = new THREE.Group();
+  pivotGroup.position.x = i * SLOT_SPACING;
+  carouselGroup.add(pivotGroup);
+  return { url, pivotGroup, pivotBaseY: 0, model: null };
+});
+
+let activeIndex = 0;
 
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -50,12 +63,12 @@ window.addEventListener("resize", () => {
 
 const loader = new GLTFLoader();
 
-function loadModel(file) {
+function loadModelIntoSlot(slot, file) {
   const url = URL.createObjectURL(file);
   loader.load(
     url,
     (gltf) => {
-      if (model) pivotGroup.remove(model.parent);
+      if (slot.model) slot.pivotGroup.remove(slot.model.parent);
       const loaded = gltf.scene;
 
       const box = new THREE.Box3().setFromObject(loaded);
@@ -73,20 +86,22 @@ function loadModel(file) {
 
       const innerGroup = new THREE.Group();
       innerGroup.add(loaded);
-      pivotGroup.add(innerGroup);
-      pivotBaseY = -scaledBox.getSize(new THREE.Vector3()).y * 0.5 + VERTICAL_OFFSET;
-      pivotGroup.position.y = pivotBaseY;
+      slot.pivotGroup.add(innerGroup);
+      slot.pivotBaseY = -scaledBox.getSize(new THREE.Vector3()).y * 0.5 + VERTICAL_OFFSET;
+      slot.pivotGroup.position.y = slot.pivotBaseY;
 
-      model = loaded;
+      slot.model = loaded;
       URL.revokeObjectURL(url);
-      overlay.classList.add("hidden");
-      cornerUpload.classList.remove("hidden");
-      maybeShowMotionButton();
+      if (slot === slots[activeIndex]) {
+        overlay.classList.add("hidden");
+        cornerUpload.classList.remove("hidden");
+        maybeShowMotionButton();
+      }
     },
     undefined,
     (err) => {
       console.error(err);
-      alert("Couldn't load that GLB.");
+      if (slot === slots[activeIndex]) alert("Couldn't load that GLB.");
     }
   );
 }
@@ -95,14 +110,15 @@ uploadBtn.addEventListener("click", () => fileInput.click());
 cornerUpload.addEventListener("click", () => fileInput.click());
 fileInput.addEventListener("change", (e) => {
   const file = e.target.files[0];
-  if (file) loadModel(file);
+  if (file) loadModelIntoSlot(slots[activeIndex], file);
 });
 
-const DEFAULT_MODEL_URL = "./model.glb";
-fetch(DEFAULT_MODEL_URL)
-  .then((res) => res.blob())
-  .then((blob) => loadModel(blob))
-  .catch(() => {});
+for (const slot of slots) {
+  fetch(slot.url)
+    .then((res) => res.blob())
+    .then((blob) => loadModelIntoSlot(slot, blob))
+    .catch(() => {});
+}
 
 // --- device motion -> bobble physics ---
 
@@ -283,7 +299,54 @@ settingsReset.addEventListener("click", () => {
   }
 });
 
+// --- carousel swipe ---
+
+const bodyCarousel = document.getElementById("body-carousel");
+for (let i = 0; i < slots.length; i++) {
+  const slide = document.createElement("div");
+  slide.className = "body-slide";
+  const img = document.createElement("img");
+  img.src = "./body.png";
+  img.alt = "";
+  slide.appendChild(img);
+  bodyCarousel.appendChild(slide);
+}
+
+const carouselDots = document.getElementById("carousel-dots");
+const dotEls = slots.map(() => {
+  const dot = document.createElement("div");
+  dot.className = "dot";
+  carouselDots.appendChild(dot);
+  return dot;
+});
+
+function updateDots() {
+  dotEls.forEach((dot, i) => dot.classList.toggle("active", i === activeIndex));
+}
+updateDots();
+
+const SWIPE_THRESHOLD = 50;
+let pointerStartX = null;
+
+canvas.addEventListener("pointerdown", (e) => { pointerStartX = e.clientX; });
+canvas.addEventListener("pointerup", (e) => {
+  if (pointerStartX === null) return;
+  const dx = e.clientX - pointerStartX;
+  pointerStartX = null;
+  if (dx < -SWIPE_THRESHOLD && activeIndex < slots.length - 1) {
+    activeIndex++;
+    updateDots();
+  } else if (dx > SWIPE_THRESHOLD && activeIndex > 0) {
+    activeIndex--;
+    updateDots();
+  }
+});
+
 // --- animation loop ---
+
+const CAROUSEL_SPRING_K = 120;
+const CAROUSEL_DAMPING = 14;
+let carouselVelX = 0;
 
 const clock = new THREE.Clock();
 
@@ -306,10 +369,19 @@ function animate() {
   angleY = THREE.MathUtils.clamp(angleY, -params.MAX_YAW, params.MAX_YAW);
   bounceY = THREE.MathUtils.clamp(bounceY, -params.MAX_BOUNCE, params.MAX_BOUNCE);
 
-  pivotGroup.rotation.x = angleX;
-  pivotGroup.rotation.y = angleY;
-  pivotGroup.rotation.z = angleZ;
-  pivotGroup.position.y = pivotBaseY + bounceY;
+  for (const slot of slots) {
+    slot.pivotGroup.rotation.x = angleX;
+    slot.pivotGroup.rotation.y = angleY;
+    slot.pivotGroup.rotation.z = angleZ;
+    slot.pivotGroup.position.y = slot.pivotBaseY + bounceY;
+  }
+
+  const targetX = -activeIndex * SLOT_SPACING;
+  carouselVelX += (-CAROUSEL_SPRING_K * (carouselGroup.position.x - targetX) - CAROUSEL_DAMPING * carouselVelX) * dt;
+  carouselGroup.position.x += carouselVelX * dt;
+
+  const carouselProgress = -carouselGroup.position.x / SLOT_SPACING;
+  bodyCarousel.style.transform = `translateX(${-carouselProgress * 100}%)`;
 
   renderer.render(scene, camera);
 }

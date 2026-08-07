@@ -21,13 +21,27 @@
     z-index: 1;
   }
 
-  #body-img {
+  #body-carousel {
     position: fixed;
+    inset: 0;
+    display: flex;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .body-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .body-slide img {
+    position: absolute;
     top: 59%;
     left: 50%;
     transform: translateX(-50%);
     width: min(70vw, 420px);
-    z-index: 0;
     pointer-events: none;
     user-select: none;
     -webkit-mask-image: radial-gradient(ellipse 55% 65% at center, black 45%, transparent 100%);
@@ -178,6 +192,29 @@
     padding: 12px;
   }
 
+  #carousel-dots {
+    position: fixed;
+    bottom: 78px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  #carousel-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  #carousel-dots .dot.active {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
   #controls {
     position: fixed;
     bottom: max(20px, env(safe-area-inset-bottom));
@@ -208,7 +245,7 @@
 </style>
 </head>
 <body>
-  <img id="body-img" src="./body.png" alt="" />
+  <div id="body-carousel"></div>
   <canvas id="canvas"></canvas>
 
   <div id="overlay">
@@ -229,6 +266,8 @@
     <button id="settings-reset" class="ctrl-btn">Reset to Defaults</button>
   </div>
 
+  <div id="carousel-dots"></div>
+
   <div id="controls">
     <button class="ctrl-btn" id="btn-left">◀ Turn</button>
     <button class="ctrl-btn" id="btn-right">Turn ▶</button>
@@ -247,6 +286,6 @@
     }
   }
   </script>
-  <script type="module" src="./app.js?v=12"></script>
+  <script type="module" src="./app.js?v=17"></script>
 </body>
 </html>
