@@ -42,9 +42,11 @@ const SLOT_SPACING = 3.2; // world units between bobble heads
 const carouselGroup = new THREE.Group();
 scene.add(carouselGroup);
 
-const SLOT_URLS = ["./model.glb", "./model2.glb", "./model3.glb", "./model4.glb"];
-const SLOT_SCALE = [1, 1, 1, 1.25]; // per-model size multiplier, tuned so each head sits well on its body
-const SLOT_VERTICAL_OFFSET = [VERTICAL_OFFSET, VERTICAL_OFFSET, VERTICAL_OFFSET, 0.1]; // per-model vertical nudge
+// bobble 4 hidden for now -- re-add "./model4.glb" (and the matching
+// entries in SLOT_SCALE/SLOT_VERTICAL_OFFSET/BODY_URLS below) to restore it
+const SLOT_URLS = ["./model.glb", "./model2.glb", "./model3.glb"];
+const SLOT_SCALE = [1, 1, 1]; // per-model size multiplier, tuned so each head sits well on its body
+const SLOT_VERTICAL_OFFSET = [VERTICAL_OFFSET, VERTICAL_OFFSET, VERTICAL_OFFSET]; // per-model vertical nudge
 
 const slots = SLOT_URLS.map((url, i) => {
   const pivotGroup = new THREE.Group();
@@ -310,7 +312,7 @@ settingsReset.addEventListener("click", () => {
 
 // --- carousel swipe ---
 
-const BODY_URLS = ["./body.png", "./body2.png", "./body3.png", "./body4.png"];
+const BODY_URLS = ["./body.png", "./body2.png", "./body3.png"];
 
 const bodyCarousel = document.getElementById("body-carousel");
 for (let i = 0; i < slots.length; i++) {
