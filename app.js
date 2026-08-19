@@ -43,12 +43,13 @@ const carouselGroup = new THREE.Group();
 scene.add(carouselGroup);
 
 const SLOT_URLS = ["./model.glb", "./model2.glb", "./model3.glb", "./model4.glb"];
+const SLOT_SCALE = [1, 1, 1, 1.4]; // per-model size multiplier, tuned so each head sits well on its body
 
 const slots = SLOT_URLS.map((url, i) => {
   const pivotGroup = new THREE.Group();
   pivotGroup.position.x = i * SLOT_SPACING;
   carouselGroup.add(pivotGroup);
-  return { url, pivotGroup, pivotBaseY: 0, model: null };
+  return { url, scaleMultiplier: SLOT_SCALE[i] ?? 1, pivotGroup, pivotBaseY: 0, model: null };
 });
 
 let activeIndex = 0;
@@ -74,7 +75,7 @@ function loadModelIntoSlot(slot, file) {
       const box = new THREE.Box3().setFromObject(loaded);
       const size = new THREE.Vector3();
       box.getSize(size);
-      const scale = 1.6 / Math.max(size.x, size.y, size.z, 0.0001);
+      const scale = (1.6 / Math.max(size.x, size.y, size.z, 0.0001)) * slot.scaleMultiplier;
       loaded.scale.setScalar(scale);
 
       const scaledBox = new THREE.Box3().setFromObject(loaded);
