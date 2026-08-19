@@ -43,7 +43,7 @@ const carouselGroup = new THREE.Group();
 scene.add(carouselGroup);
 
 const SLOT_URLS = ["./model.glb", "./model2.glb", "./model3.glb", "./model4.glb"];
-const SLOT_SCALE = [1, 1, 1, 1.4]; // per-model size multiplier, tuned so each head sits well on its body
+const SLOT_SCALE = [1, 1, 1, 1.25]; // per-model size multiplier, tuned so each head sits well on its body
 const SLOT_VERTICAL_OFFSET = [VERTICAL_OFFSET, VERTICAL_OFFSET, VERTICAL_OFFSET, 0.1]; // per-model vertical nudge
 
 const slots = SLOT_URLS.map((url, i) => {
